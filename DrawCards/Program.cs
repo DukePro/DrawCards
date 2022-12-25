@@ -41,7 +41,8 @@
                 Console.SetCursorPosition(0, dealerMessagePositionY);
                 _dealer.DecideWin(_player.CountScore());
                 Console.SetCursorPosition(0, scorePositionY);
-                DisplayScore(_player.CountScore());
+                Console.Write(_player.Name);
+                _player.DisplayScore(_player.CountScore());
                 Console.SetCursorPosition(0, gameMenuPositionY);
                 Console.WriteLine(MenuDrawCard + " - Взять карту");
                 Console.WriteLine(MenuNewGame + " - Заново");
@@ -53,19 +54,16 @@
                     case MenuDrawCard:
                         TakeCard();
                         break;
+
                     case MenuNewGame:
                         ShowGameMenu();
                         break;
+
                     case MenuExit:
                         isExit = true;
                         break;
                 }
             }
-        }
-
-        private void DisplayScore(int score)
-        {
-            Console.Write($"{_player.Name}, очки: {_player.CountScore()}");
         }
 
         private void TakeCard()
@@ -78,7 +76,6 @@
             }
         }
     }
-
 
     class Dealer
     {
@@ -203,6 +200,12 @@
             }
 
             return _score;
+        }
+
+        public void DisplayScore(int score)
+        {
+
+            Console.Write($", очки: {CountScore()}");
         }
 
         public void ShowHand()
