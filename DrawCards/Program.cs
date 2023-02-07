@@ -11,15 +11,16 @@
 
     class Casino
     {
-        private const string MenuDrawCard = "1";
-        private const string MenuNewGame = "2";
-        private const string MenuExit = "0";
+
 
         private Dealer _dealer = new Dealer();
         private Player _player = new Player("Игрок");
 
         public void ShowGameMenu()
         {
+            const string MenuDrawCard = "1";
+            const string MenuNewGame = "2";
+            const string MenuExit = "0";
             string userInput;
             bool isExit = false;
             int cardDeckPositionY = 0;
