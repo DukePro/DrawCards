@@ -11,8 +11,6 @@
 
     class Casino
     {
-
-
         private Dealer _dealer = new Dealer();
         private Player _player = new Player("Игрок");
 
@@ -69,9 +67,7 @@
 
         private void TakeCard()
         {
-            Card card = null;
-
-            if (_dealer.TryGiveCard(out card))
+            if (_dealer.TryGiveCard(out Card card))
             {
                 _player.AddCard(card);
             }
@@ -164,28 +160,29 @@
 
     class Card
     {
-        public int Suit { get; private set; }
-        public string Name { get; private set; }
-        public int Rank { get; private set; }
-
         public Card(int suit, string name, int rank)
         {
             Suit = suit;
             Name = name;
             Rank = rank;
         }
+
+        public int Suit { get; }
+        public string Name { get; }
+        public int Rank { get; }
     }
 
     class Player
     {
         private List<Card> _cards = new List<Card>();
-        public string Name { get; private set; }
 
         public Player(string name)
         {
             Name = name;
         }
 
+        public string Name { get; private set; }
+        
         public void AddCard(Card card)
         {
             _cards.Add(card);
@@ -193,14 +190,14 @@
 
         public int CountScore()
         {
-            int _score = 0;
+            int score = 0;
 
             foreach (Card card in _cards)
             {
-                _score += card.Rank;
+                score += card.Rank;
             }
 
-            return _score;
+            return score;
         }
 
         public void DisplayScore(int score)
