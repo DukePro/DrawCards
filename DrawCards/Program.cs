@@ -5,22 +5,18 @@
         static void Main()
         {
             Casino casino = new Casino();
-            casino.ShowGameMenu();
+            casino.StartGame();
         }
     }
 
     class Casino
     {
+        private bool _isExit = false;
         private Dealer _dealer = new Dealer();
         private Player _player = new Player("Игрок");
 
-        public void ShowGameMenu()
+        public void StartGame()
         {
-            const string MenuDrawCard = "1";
-            const string MenuNewGame = "2";
-            const string MenuExit = "0";
-            string userInput;
-            bool isExit = false;
             int cardDeckPositionY = 0;
             int cardTrayPositionY = 1;
             int dealerMessagePositionY = 3;
@@ -29,43 +25,60 @@
 
             _player.ClearHand();
             _dealer.BuildDeck();
+            
+            _isExit = false;
 
-            while (isExit == false)
+            while (_isExit == false)
             {
                 Console.Clear();
                 Console.SetCursorPosition(0, cardDeckPositionY);
-                _dealer.CountDeck();
+                _dealer.ShowCardsCount();
+
                 Console.SetCursorPosition(0, cardTrayPositionY);
                 _player.ShowHand();
+
                 Console.SetCursorPosition(0, dealerMessagePositionY);
                 _dealer.DecideWin(_player.CountScore());
+
                 Console.SetCursorPosition(0, scorePositionY);
                 Console.Write(_player.Name);
                 _player.DisplayScore(_player.CountScore());
+                
                 Console.SetCursorPosition(0, gameMenuPositionY);
-                Console.WriteLine(MenuDrawCard + " - Взять карту");
-                Console.WriteLine(MenuNewGame + " - Заново");
-                Console.WriteLine(MenuExit + " - Выход");
-                userInput = Console.ReadLine();
-
-                switch (userInput)
-                {
-                    case MenuDrawCard:
-                        TakeCard();
-                        break;
-
-                    case MenuNewGame:
-                        ShowGameMenu();
-                        break;
-
-                    case MenuExit:
-                        isExit = true;
-                        break;
-                }
+                ShowMenu();
             }
         }
 
-        private void TakeCard()
+        private void ShowMenu()
+        {
+            const string MenuTransferCard = "1";
+            const string MenuNewGame = "2";
+            const string MenuExit = "0";
+
+            string userInput;
+
+            Console.WriteLine(MenuTransferCard + " - Взять карту");
+            Console.WriteLine(MenuNewGame + " - Заново");
+            Console.WriteLine(MenuExit + " - Выход");
+            userInput = Console.ReadLine();
+
+            switch (userInput)
+            {
+                case MenuTransferCard:
+                    TransferCard();
+                    break;
+
+                case MenuNewGame:
+                    StartGame();
+                    break;
+
+                case MenuExit:
+                    _isExit = true;
+                    break;
+            }
+        }
+
+        private void TransferCard()
         {
             if (_dealer.TryGiveCard(out Card card))
             {
@@ -81,9 +94,20 @@
         public void BuildDeck()
         {
             List<Card> cards = new List<Card>();
-            List<int> suits = new List<int>(new int[] { 03, 04, 05, 06 });
-            List<string> names = new List<string>(new string[] { "6", "7", "8", "9", "10", "Jack", "Queen", "King", "Ace" });
-            List<int> ranks = new List<int>(new int[] { 6, 7, 8, 9, 10, 8, 9, 10, 11 });
+            List<int> suits = new List<int>(){ 03, 04, 05, 06 };
+            Dictionary<string, int> blackJackPoints = new Dictionary<string, int>()
+            {
+                ["6"] = 6,
+                ["7"] = 7,
+                ["8"] = 8,
+                ["9"] = 9,
+                ["10"] = 10,
+                ["Jack"] = 8,
+                ["Qeen"] = 9,
+                ["King"] = 10,
+                ["Ace"] = 11
+            };
+
             Random random = new Random();
 
             cards.Clear();
@@ -91,9 +115,9 @@
 
             for (int i = 0; i < suits.Count; i++)
             {
-                for (int j = 0; j < names.Count; j++)
+                foreach (var item in blackJackPoints)
                 {
-                    cards.Add(new Card(suits[i], names[j], ranks[j]));
+                    cards.Add(new Card(suits[i], item.Key, item.Value));
                 }
             }
 
@@ -122,7 +146,7 @@
             }
         }
 
-        public void CountDeck()
+        public void ShowCardsCount()
         {
             Console.WriteLine("В колоде: " + _deck.Count + " карт.");
         }
@@ -133,7 +157,6 @@
 
             if (score > scoreToWin)
             {
-
                 if (_deck.Count <= 0)
                 {
                     Console.Write("Колода пуста");
